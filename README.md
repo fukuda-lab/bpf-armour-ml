@@ -41,6 +41,14 @@ cd bpf-armour-ml
 > 
 
 ### 2. Build
+Build the libbpf library. You might need to be root.
+For the latest info, refer to the [libbpf repository](https://github.com/libbpf/libbpf).
+
+```bash
+cd lib/libbpf
+make
+```
+
 
 Run `make` to compile the eBPF program. You might need to be root.
 
