@@ -1,7 +1,7 @@
 # bpf-armour-ml
-A high-performance network anomaly detection framework powered by eBPF, XDP (eXpress Data Path), and ML(decision tree and neural network). This project allows for packet inspection and filtering at the earliest possible point in the kernel driver, providing low-overhead monitoring and security enforcement.
+A **high-performance network anomaly detection framework powered by eBPF, XDP (eXpress Data Path), and ML** (decision tree and neural network). This project allows for packet inspection and filtering at the earliest possible point in the kernel driver, providing low-overhead monitoring and security enforcement.
 
-This repository also contains our fixed-point library under lib/fixed-point directory.
+This repository also contains our **fixed-point library** under lib/fixed-point directory.
 This library is specifically implemented to target eBPF programs, and to circumvent restrictions imposed by the verifier. It is also an extension of our previous work in [FIDe](https://github.com/fukuda-lab/FIDe). For more details on dynamic fixed-point, visit  [FIDe](https://github.com/fukuda-lab/FIDe) or our [paper](https://dl.acm.org/doi/10.1145/3674213.3674219).
 
 ## Prerequisites
@@ -18,7 +18,6 @@ To build and run this project, you need a Linux environment with the following d
 ```bash
 sudo apt update
 sudo apt install xdp-tools
-
 ```
 
 
@@ -64,12 +63,9 @@ We recommend using `xdp-loader` to manage the lifecycle of the XDP program. This
 Attach the program to your network interface (e.g., `eth0`).
 
 ```bash
-# Generic Mode (Works on most drivers, good for testing)
 sudo xdp-loader load [interface_name] .bpf-armour.o
 
-# Native Mode (High performance, requires driver support)
-# sudo xdp-loader load -m native eth0 .output/detector.bpf.o
-
+# It is recommended to run this framework on Native mode, but generic mode is supported. Offload mode has not beed tested yet.
 ```
 
 ### Checking Status
@@ -94,10 +90,6 @@ sudo xdp-loader unload [interface_name] --all
 * `main/`: Source code for eBPF programs.
 * `lib/fixed-point`: Directory that contains fixed-point library. (header files)
 * `lib/libbpf/`: Submodule for libbpf.
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
