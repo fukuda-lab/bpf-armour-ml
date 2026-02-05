@@ -102,4 +102,4 @@ The anomaly detection models used in the framework can be updated. Refer to the 
 * `lib/libbpf/`: Submodule for libbpf.
 
 ## License
-GNU License
+GPL3.0 License
