@@ -92,6 +92,8 @@ To detach the program and clean up:
 sudo xdp-loader unload [interface_name] --all
 
 ```
+### Training the Models
+The anomaly detection models used in the framework can be updated. Refer to the Training README under [training](https://github.com/fukuda-lab/bpf-armour-ml/blob/main/training/README.md).
 
 ## Directory Structure
 
@@ -100,5 +102,4 @@ sudo xdp-loader unload [interface_name] --all
 * `lib/libbpf/`: Submodule for libbpf.
 
 ## License
-
-[MIT](https://www.google.com/search?q=LICENSE)
+GNU License
