@@ -34,3 +34,8 @@ Python3 ml_train.py
 
 ## Neural Network Training
 * Run nn_train.py to train a neural network with tensorflow.
+* The file has been tested in a CUDA environment with RTX 3060Ti. However, it should work on other GPUS and CPUs without any problems.
+```bash
+Python3 nn_train.py
+```
+* The trained neural network will be saved as nn_model.keras. 
