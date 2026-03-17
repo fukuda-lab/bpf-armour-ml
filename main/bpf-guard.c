@@ -218,14 +218,14 @@ struct
     __uint(max_entries, 1);
 } logger_value_new_map SEC(".maps");
 
-int add_blocklist(struct logger_key *logger_key, struct logger_value *logger_value)
+int __always_inline add_blocklist(struct logger_key *logger_key, struct logger_value *logger_value)
 {
-    if (!logger_key || !logger_value)
+    if (!logger_value)
     {
         return -1;
     }
 
-    struct blocklist_key filter_key;
+    struct blocklist_key filter_key = {0};
     filter_key.prefixlen = 72;
     filter_key.address = logger_key->src_address;
     filter_key.protocol = logger_key->protocol;
@@ -945,12 +945,12 @@ int __always_inline process_ethhdr(struct xdp_md *ctx, struct log *log)
 SEC("xdp") // This is the typical "main" function replacement.
 int xdp_filter_func(struct xdp_md *ctx)
 {
-    struct log log_data = {0};
-    struct log *log = &log_data;
-    log->timestamp = bpf_ktime_get_ns() / 1000;
+    struct log log = {0};
+    // struct log *log = &log_data;
+    log.timestamp = bpf_ktime_get_ns() / 1000;
 
     return process_ethhdr(ctx, &log);
-    process_ethhdr(ctx, log);
+    // process_ethhdr(ctx, *log);
 
     return bpf_redirect_map(&tx_port, 0, 0);
 }
