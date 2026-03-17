@@ -20,6 +20,7 @@ sudo apt update
 sudo apt install xdp-tools
 ```
 
+If you do not prefer the system-wide installation of xdp-tools, you will find the repository of xdp-tools [here](https://github.com/xdp-project/xdp-tools).
 
 ## Getting Started
 
@@ -60,7 +61,7 @@ make
 
 Upon success, the eBPF object file will be generated as:
 
-* `bpf-armour.o`
+* `bpf-guard.o`
 
 ## Usage
 
@@ -71,7 +72,7 @@ We recommend using `xdp-loader` to manage the lifecycle of the XDP program. This
 Attach the program to your network interface (e.g., `eth0`).
 
 ```bash
-sudo xdp-loader load [interface_name] .bpf-armour.o
+sudo xdp-loader load [interface_name] bpf-guard.o
 
 # It is recommended to run this framework on Native mode, but generic mode is supported. Offload mode has not beed tested yet.
 ```
