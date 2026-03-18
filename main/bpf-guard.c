@@ -183,7 +183,8 @@ struct
     __type(value, __u32);
     __uint(map_flags, BPF_F_NO_PREALLOC);
     __uint(max_entries, 10000);
-} blacklist SEC(".maps");
+    __uint(pinning, LIBBPF_PIN_BY_NAME);
+} blocklist SEC(".maps");
 
 struct
 {
@@ -233,7 +234,7 @@ int __always_inline add_blocklist(struct logger_key *logger_key, struct logger_v
     filter_key.dest_port = logger_key->dest_port;
 
     __u32 rule = 1;
-    bpf_map_update_elem(&blacklist, &filter_key, &rule, BPF_ANY);
+    bpf_map_update_elem(&blocklist, &filter_key, &rule, BPF_ANY);
 
     return 1;
 }
