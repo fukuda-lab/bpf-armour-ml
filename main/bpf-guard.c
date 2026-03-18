@@ -799,7 +799,7 @@ int search_blocklist(struct log *log)
         filter_key.src_port = log->src_port;
         filter_key.dest_port = log->dest_port;
 
-        __u32 *rule = bpf_map_lookup_elem(&blacklist, &filter_key);
+        __u32 *rule = bpf_map_lookup_elem(&blocklist, &filter_key);
         if (rule)
         {
             // flow is on the blocklist, drop it
