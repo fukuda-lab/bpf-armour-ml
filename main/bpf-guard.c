@@ -13,7 +13,7 @@
 // #include "../lib/fixed-point/static-fixed-point.h"
 #include "../lib/fixed-point/fixed-point.h"
 
-#define invl_ns 1000000000
+#define invl_ns 1000000
 
 #define LOGGER_MAP_SIZE 10000
 
@@ -210,14 +210,6 @@ struct
     __uint(map_flags, BPF_F_NO_PREALLOC);
     __uint(max_entries, 10);
 } network_segment SEC(".maps");
-
-struct
-{
-    __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-    __type(key, int);
-    __type(value, struct logger_value);
-    __uint(max_entries, 1);
-} logger_value_new_map SEC(".maps");
 
 int __always_inline add_blocklist(struct logger_key *logger_key, struct logger_value *logger_value)
 {
@@ -531,6 +523,11 @@ int calculate_avg_variance(struct log *log, struct logger_value *logger_value)
 // identifies the direction of the flow
 int find_fwd_bwd_network(struct log *log)
 {
+    if (log == NULL)
+    {
+        return XDP_PASS;
+    }
+
     struct network_segment_key ntwk_key;
     ntwk_key.prefixlen = 32;
     ntwk_key.address = log->src_address;
@@ -558,7 +555,7 @@ int find_fwd_bwd_network(struct log *log)
         }
         else // Packet destination/source does not belog to this network, so let the kernel handle it
         {
-            return XDP_DROP;
+            return XDP_PASS;
         }
     }
 
@@ -767,21 +764,18 @@ int __always_inline store_log(struct xdp_md *ctx, struct log *log)
         else
         {
             int key = 0;
-            struct logger_value *new_value = bpf_map_lookup_elem(&logger_value_new_map, &key);
-            if (new_value)
-            {
-                new_value->timestamp = log->timestamp;
-                new_value->min_packet_bytes = INT32_MAX;
-                new_value->fwd_min_packet_bytes = INT32_MAX;
-                new_value->bwd_min_packet_bytes = INT32_MAX;
-                new_value->min_iat = INT32_MAX;
-                new_value->fwd_min_iat = INT32_MAX;
-                new_value->bwd_min_iat = INT32_MAX;
-                new_value->fwd_seg_min = INT32_MAX;
-                new_value->bwd_seg_min = INT32_MAX;
-                collect_log(ctx, log, new_value);
-                bpf_map_update_elem(&logger, &logger_key, new_value, BPF_ANY);
-            }
+            static struct logger_value init_value = {0};
+            init_value.min_packet_bytes = INT32_MAX;
+            init_value.fwd_min_packet_bytes = INT32_MAX;
+            init_value.bwd_min_packet_bytes = INT32_MAX;
+            init_value.min_iat = INT32_MAX;
+            init_value.fwd_min_iat = INT32_MAX;
+            init_value.bwd_min_iat = INT32_MAX;
+            init_value.fwd_seg_min = INT32_MAX;
+            init_value.bwd_seg_min = INT32_MAX;
+            collect_log(ctx, log, &init_value);
+            bpf_map_update_elem(&logger, &logger_key, &init_value, BPF_ANY);
+
         }
         check_timestamp(ctx, log);
     }
@@ -950,9 +944,10 @@ int xdp_filter_func(struct xdp_md *ctx)
     // struct log *log = &log_data;
     log.timestamp = bpf_ktime_get_ns() / 1000;
 
-    return process_ethhdr(ctx, &log);
+    process_ethhdr(ctx, &log);
     // process_ethhdr(ctx, *log);
 
-    return bpf_redirect_map(&tx_port, 0, 0);
+    // return bpf_redirect_map(&tx_port, 0, 0);
+    return XDP_TX;
 }
 char _license[] SEC("license") = "GPL";
