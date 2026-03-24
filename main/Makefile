@@ -10,10 +10,14 @@ BPF_OBJ     := bpf-guard.o
 CFLAGS_BPF  := -g -O2 -target bpf -D__TARGET_ARCH_$(ARCH)
 
 # --- User-Space Program Variables ---
+LIBBPF_INCLUDE := ../lib/libbpf/src
+LIBBPF_LIB     := ../lib/libbpf/src
+
 SRC_APP     := map-reader.c
 APP_BIN     := map-reader
-CFLAGS_APP  := -g -O2 -Wall
-LDFLAGS     := -lbpf -lelf -lz
+CFLAGS_APP  := -g -O2 -Wall -I$(LIBBPF_INCLUDE)
+LDFLAGS     := -L$(LIBBPF_LIB) -Wl,-rpath=$(LIBBPF_LIB)
+LDLIBS      := -lbpf -lelf -lz
 
 .PHONY: all clean
 
@@ -26,7 +30,7 @@ $(BPF_OBJ): $(SRC_BPF)
 
 # Rule to compile the user-space map reader using gcc
 $(APP_BIN): $(SRC_APP)
-	$(CC) $(CFLAGS_APP) $(SRC_APP) -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS_APP) $(SRC_APP) -o $@ $(LDFLAGS) $(LDLIBS)
 
 # Rule to clean up compiled files
 clean:

@@ -2,8 +2,8 @@
 #include <stdint.h>
 #include <errno.h>
 #include <arpa/inet.h>
-#include <bpf/bpf.h>
-#include <bpf/libbpf.h>
+#include "../lib/libbpf/src/bpf.h"
+#include "../lib/libbpf/src/libbpf.h"
 #include <unistd.h>
 
 // 1. Copy the EXACT struct from your eBPF code
