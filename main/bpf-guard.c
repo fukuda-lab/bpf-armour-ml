@@ -426,6 +426,8 @@ static int detection(struct bpf_map *map, const struct logger_key *logger_key, s
             add_blocklist(logger_key, logger_value);
         }
     }
+
+    bpf_map_delete_elem(&logger, logger_key);
     return 0;
 }
 
@@ -797,7 +799,7 @@ int search_blocklist(struct log *log)
         if (rule)
         {
             // flow is on the blocklist, drop it
-            return XDP_DROP;
+            // return XDP_DROP;
         }
         else
         {
@@ -948,6 +950,6 @@ int xdp_filter_func(struct xdp_md *ctx)
     // process_ethhdr(ctx, *log);
 
     // return bpf_redirect_map(&tx_port, 0, 0);
-    return XDP_TX;
+    return XDP_PASS;
 }
 char _license[] SEC("license") = "GPL";
